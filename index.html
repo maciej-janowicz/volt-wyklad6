@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sprawa rodowodu Volt-R</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papier:#f3eee2; --karta:#fffdf7; --tusz:#28231d; --szary:#6b6357; --linia:#ddd3c0;
+  --ogorek:#3f6b3a; --ogorek-j:#e4eedc; --waleriana:#a8671b; --waleriana-j:#f6e8d2;
+  --piecz:#a3362a; --piecz-j:#f6dfdb;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papier);color:var(--tusz);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+header{position:sticky;top:0;z-index:5;background:var(--tusz);color:#f3eee2;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:17px;letter-spacing:.2px}
+.dots{display:flex;gap:6px;flex:1}
+.dots i{width:11px;height:11px;border-radius:50%;border:1.5px solid #f3eee2;display:inline-block}
+.dots i.done{background:#9cc58f;border-color:#9cc58f}
+.dots i.cur{background:#f3eee2}
+.meta{font-size:13px;opacity:.85}
+main{max-width:640px;margin:0 auto;padding:6px 16px 60px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.2}
+h1{font-size:30px;margin:6px 0 10px}
+h2{font-size:24px;margin:4px 0 10px}
+h3{font-size:18px;margin:0 0 8px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--szary);font-weight:600}
+.sheet{background:var(--karta);border:1px solid var(--linia);border-radius:14px;padding:16px;margin:14px 0}
+.story{background:var(--karta);border-left:4px solid var(--waleriana);border-radius:4px 14px 14px 4px;padding:14px 16px;margin:14px 0}
+.story p{margin:0 0 10px}.story p:last-child{margin:0}
+.lekcja{background:var(--ogorek-j);border-radius:14px;padding:14px 16px;margin:14px 0}
+.lekcja p{margin:0 0 8px}.lekcja p:last-child{margin:0}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.92em;background:rgba(40,35,29,.07);padding:1px 5px;border-radius:5px}
+.small{font-size:14px;color:var(--szary)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+input[type=text]{flex:1;min-width:0;font:inherit;padding:12px 14px;border:1.5px solid var(--linia);border-radius:10px;background:#fff}
+input[type=text]:focus{outline:2px solid var(--ogorek);border-color:var(--ogorek)}
+.btn{font:600 16px "IBM Plex Sans",sans-serif;border:0;border-radius:10px;padding:12px 18px;background:var(--ogorek);color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--tusz);border:1.5px solid var(--linia)}
+.misje{list-style:none;padding:0;margin:0}
+.misje li{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--linia)}
+.misje li:last-child{border:0}
+.misje .nr{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;font:800 15px Fraunces,serif;background:var(--papier);border:1.5px solid var(--linia)}
+.misje li.done .nr{background:var(--ogorek);color:#fff;border-color:var(--ogorek)}
+.misje .t{flex:1}.misje .t b{display:block}
+.misje button{white-space:nowrap}
+.q{background:var(--karta);border:1px solid var(--linia);border-radius:14px;padding:14px;margin:12px 0}
+.stem{font-weight:600;margin-bottom:10px}
+.opts{display:grid;gap:8px}
+.opt{font:inherit;text-align:left;padding:11px 13px;border-radius:10px;border:1.5px solid var(--linia);background:#fff;color:var(--tusz);cursor:pointer}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ogorek);background:var(--ogorek-j)}
+.opt.wrong{border-color:var(--piecz);background:var(--piecz-j)}
+.why{margin-top:10px;font-size:14.5px;padding:10px 12px;border-radius:10px;background:var(--ogorek-j)}
+.why.bad{background:var(--piecz-j)}
+.req{display:flex;flex-direction:column;gap:8px;background:var(--karta);border:1px solid var(--linia);border-radius:14px;padding:12px 14px;margin:10px 0}
+.seg{display:flex;border:1.5px solid var(--linia);border-radius:10px;overflow:hidden;align-self:flex-start}
+.seg button{font:600 14px "IBM Plex Sans",sans-serif;padding:9px 14px;border:0;background:#fff;color:var(--tusz);cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--linia)}
+.seg button.on{background:var(--tusz);color:#fff}
+.seg button:disabled{cursor:default}
+select{font:inherit;width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--linia);background:#fff;color:var(--tusz)}
+.verdict{font-size:14px}
+.verdict.ok{color:var(--ogorek);font-weight:600}
+.verdict.no{color:var(--piecz);font-weight:600}
+.wynik{font:800 20px Fraunces,serif;margin:14px 0 4px}
+.cert{background:#fff;border:2px solid var(--tusz);outline:6px double var(--waleriana);outline-offset:-12px;border-radius:6px;padding:30px 24px;text-align:center;margin:18px 0}
+.cert .score{font:800 26px Fraunces,serif;margin:6px 0}
+.cert .code{font:600 30px "IBM Plex Mono",monospace;letter-spacing:.18em;color:var(--piecz);margin:6px 0}
+.footer{margin-top:30px;font-size:13px;color:var(--szary);text-align:center}
+.footer a{color:var(--szary)}
+.lapa{font-size:22px}
+</style>
+</head>
+<body>
+<header id="bar"></header>
+<main id="app"></main>
+<script>
+"use strict";
+/* ===================== stan gry ===================== */
+const KLUCZ = "volt-r-wyklad6";
+let S = {name:"", view:"start", mi:0, ans:{}, pts:{}};
+try { const z = JSON.parse(localStorage.getItem(KLUCZ)||"null"); if (z && typeof z==="object") S = Object.assign(S,z); } catch(e){}
+function zapisz(){ try{ localStorage.setItem(KLUCZ, JSON.stringify(S)); }catch(e){} }
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ===================== misje ===================== */
+const MISJE = [
+{
+  tytul:"Zamek bez ścian",
+  temat:"po co izolacja, chroot",
+  opowiesc:`<p>Stanisław Głąb obchodzi zamek barona z miną człowieka, który widział już wszystko i niczego nie polubił. Wszystkie komnaty łączą się ze sobą. Kucharz widzi sejf, ogrodnik widzi sejf, nawet kot sąsiadów widzi sejf.</p>
+  <p>— Ależ archiwum było zabezpieczone! — protestuje baron. — Zamknąłem je w <code>chroot</code>!</p>
+  <p>Głąb wzdycha tak głęboko, że Volt-R na wszelki wypadek się kładzie.</p>`,
+  lekcja:`<p><b>Izolacja procesów</b> zakłada z góry, że każdy program kiedyś zostanie przejęty. Pytanie brzmi więc nie „czy”, tylko „co napastnik zdoła wtedy zrobić”. Im ciaśniejszy pokój, tym mniejszy <b>zasięg szkód</b>.</p>
+  <p><code>chroot</code> (od <i>change root</i>, „zmień korzeń”) zmienia tylko to, który katalog proces uważa za <code>/</code>. Niczego więcej nie ukrywa.</p>`,
+  czesci:[{typ:"quiz", pyt:[
+    {p:"Co robi wywołanie <code>chroot(\"/archiwum\")</code>?",
+     o:["Szyfruje katalog <code>/archiwum</code>","Sprawia, że proces uznaje <code>/archiwum</code> za korzeń systemu plików","Daje procesowi osobną listę procesów i osobną sieć"], ok:1,
+     w:"<code>chroot</code> zmienia wyłącznie punkt widzenia na system plików. Listę procesów, sieć i użytkowników proces widzi tak samo jak wszyscy inni."},
+    {p:"Ktoś uprzejmie zamontował w „więzieniu” <code>chroot</code> katalog <code>/proc</code>. Kamerdyner wpisuje <code>ps aux</code>. Co zobaczy?",
+     o:["Tylko siebie","Wszystkie procesy zamku, łącznie z procesami barona","Komunikat „brak dostępu”"], ok:1,
+     w:"Dokładnie to pokazywał wykład: w „więzieniu” nie widać plików systemu, ale widać wszystkie procesy. Do ukrycia procesów potrzebna jest przestrzeń nazw PID."},
+    {p:"Czy proces z uprawnieniami roota może uciec z <code>chroot</code>?",
+     o:["Nie, <code>chroot</code> jest szczelny jak sejf barona","Tak, na przykład wykonując kolejny <code>chroot</code> i wspinając się po <code>..</code> ponad stary korzeń","Tylko w systemie Windows"], ok:1,
+     w:"<code>chroot</code> nigdy nie był pomyślany jako mechanizm bezpieczeństwa (w 1979 roku służył do budowania i testowania oprogramowania). Root wychodzi z niego znanymi sztuczkami."},
+    {p:"Jaki jest główny powód izolowania procesów?",
+     o:["Przyspieszenie działania programów","Ograniczenie zasięgu szkód, gdy program zostanie przejęty","Oszczędność miejsca na dysku"], ok:1,
+     w:"Zakładamy, że błąd w programie prędzej czy później się znajdzie. Izolacja decyduje o tym, ile wtedy stracimy."},
+    {p:"Program barona przerabia zdjęcia Volt-R na pocztówki. Głąb odbiera mu dostęp do sieci, listy procesów i katalogu domowego. Którą zasadę Saltzera i Schroedera stosuje?",
+     o:["Zasadę najmniejszych uprawnień","Zasadę jawności projektu","Zasadę akceptowalności psychologicznej"], ok:0,
+     w:"Program dostaje dokładnie to, czego potrzebuje do pracy, i ani odrobiny więcej. Głąb nazywa to minimalizmem i od razu poprawia mu się humor."}
+  ]}]
+},
+{
+  tytul:"Każdy kot we własnym pokoju",
+  temat:"przestrzenie nazw",
+  opowiesc:`<p>Volt-R wywęszył w kącie wielkiej sali sierść kota i liście waleriany: to znak rozpoznawczy Wieńczysława Nieszczególnego. Obok unosi się zapach jaśminowych perfum, czyli Bogumiła Kadrylla. Dwóch rywali, jeden łup.</p>
+  <p>Głąb postanawia przebudować zamek tak, żeby każdy gość — także przyszły włamywacz — mieszkał we własnym pokoju i widział tylko swoje rzeczy. Ściany w tym zamku nazywają się <b>przestrzeniami nazw</b>.</p>`,
+  lekcja:`<p><b>Przestrzeń nazw</b> (<i>namespace</i>) daje procesowi własny widok wybranego zasobu jądra. Proces nie jest „zamknięty”, tylko <b>nie widzi</b> tego, co jest za ścianą.</p>
+  <p>Ciekawostka: pełne imię barona ma 73 znaki nawet bez spacji, a nazwa hosta w Linuksie może mieć najwyżej 64. Zamek musiał więc przyjąć skróconą nazwę.</p>`,
+  czesci:[{typ:"dopasuj", polecenie:"Proszę dobrać do każdej sytuacji rodzaj przestrzeni nazw. Każdy rodzaj pasuje dokładnie raz.",
+    opcje:["UTS (nazwa hosta)","PID (identyfikatory procesów)","sieci (net)","montowania (mnt)","użytkowników (user)","IPC (komunikacja międzyprocesowa)"],
+    pozycje:[
+      {t:"Kot nr 7 Nieszczególnego uruchamia <code>hostname</code> i dumnie odczytuje „kocia-wieza”, a zamek nadal nazywa się „thunder-ten-tronkh”.", ok:0, w:"Nazwę hosta (i nazwę domeny NIS) rozdziela przestrzeń UTS."},
+      {t:"Każdy kot jest przekonany, że jest procesem numer 1. Jak to koty.", ok:1, w:"W nowej przestrzeni PID pierwszy proces dostaje numer 1 i nie widzi procesów spoza niej."},
+      {t:"Kadryll w swojej komnacie widzi tylko interfejs <code>lo</code> i nie dosięga Wi-Fi barona.", ok:2, w:"Przestrzeń sieci daje własne interfejsy, adresy, tablice tras i reguły zapory."},
+      {t:"Volt-R ma własny katalog <code>/</code>, w którym są tylko miska i legowisko.", ok:3, w:"Przestrzeń montowania daje własne drzewo punktów montowania — to „porządny <code>chroot</code>”."},
+      {t:"Nieszczególny jest w środku rootem (UID 0), ale na zewnątrz jądro widzi go jako UID 100000 i odmawia mu zapisu do <code>/etc</code>.", ok:4, w:"Przestrzeń użytkowników odwzorowuje identyfikatory: „root” w środku to zwykły użytkownik na zewnątrz."},
+      {t:"Kadryll i Nieszczególny działają na tym samym komputerze, ale nie mogą korzystać ze wspólnej kolejki komunikatów ani pamięci dzielonej Systemu V.", ok:5, w:"Obiekty komunikacji międzyprocesowej Systemu V i kolejki komunikatów POSIX rozdziela przestrzeń IPC."}
+    ]}]
+},
+{
+  tytul:"Waleriana na limity",
+  temat:"grupy kontrolne",
+  opowiesc:`<p>Trop prowadzi do piwnicy. Koty Nieszczególnego zjadły całą walerianę barona, a przy okazji wszystkie ogórki kiszone, które Głąb przywiózł w prezencie. Jeden kot rozmnożył się w tempie, które przeczy biologii.</p>
+  <p>— Ściany nie wystarczą — mruczy Głąb. — Każdy pokój potrzebuje licznika.</p>`,
+  lekcja:`<p><b>Grupy kontrolne</b> (<i>control groups</i>, <code>cgroups</code>) ograniczają i rozliczają zasoby: procesor, pamięć, liczbę procesów, operacje wejścia-wyjścia. W analogii z hotelem to liczniki wody i prądu w każdym pokoju.</p>
+  <p>Przestrzenie nazw mówią, <b>co</b> proces widzi. Grupy kontrolne mówią, <b>ile</b> może zużyć.</p>`,
+  czesci:[{typ:"quiz", pyt:[
+    {p:"Do czego przede wszystkim służą grupy kontrolne?",
+     o:["Do ukrywania plików przed procesami","Do ograniczania i rozliczania zasobów grupy procesów","Do filtrowania wywołań systemowych"], ok:1,
+     w:"Ukrywanie to zadanie przestrzeni nazw, filtrowanie wywołań — zadanie seccomp. Grupy kontrolne liczą i limitują."},
+    {p:"Kot uruchamia bombę widłową (<i>fork bomb</i>) w grupie z ustawieniem <code>pids.max = 4</code>. Co się stanie?",
+     o:["Cały zamek przestanie odpowiadać","Kolejne wywołania <code>fork()</code> ponad limit zakończą się błędem, a reszta systemu będzie działać","Jądro zabije wszystkie procesy w systemie"], ok:1,
+     w:"Tak wyglądał pokaz z wykładu: bomba „rozbrojona” limitem. Nowe procesy po prostu nie powstają (błąd <code>EAGAIN</code>)."},
+    {p:"Procesy w grupie kotów przekraczają limit <code>memory.max</code>. Co zrobi jądro?",
+     o:["Zabierze pamięć procesom barona","Zignoruje limit, bo koty są szlachetne","Uruchomi zabójcę procesów (OOM killer) w obrębie tej grupy"], ok:2,
+     w:"Najpierw jądro próbuje odzyskać pamięć, a gdy się nie da, zabija proces z tej grupy — nie z innych."},
+    {p:"Co oznacza <code>cpu.max = \"20000 100000\"</code>?",
+     o:["Grupa może zużyć najwyżej 20 ms czasu procesora w każdym okresie 100 ms, czyli 20% jednego rdzenia","Proces zostanie zabity po 20 sekundach","W grupie może być najwyżej 20 000 procesów"], ok:0,
+     w:"Obie liczby są w mikrosekundach: przydział i okres. Przekroczenie nie zabija, tylko spowalnia (dławi) grupę."},
+    {p:"Słoik ogórków kiszonych Głąba stoi w piwnicy obok słoików barona. Który element izolacji przypomina wspólna piwnica?",
+     o:["Wspólne jądro systemu, na którym stoją wszystkie kontenery","Przestrzeń nazw sieci","Plik <code>/etc/passwd</code>"], ok:0,
+     w:"Kontenery są jak słoiki: każdy ma własną zawartość, ale wszystkie stoją na tej samej półce — jądrze. Gdy półka pęknie, spadają wszystkie."}
+  ]}]
+},
+{
+  tytul:"Pułapka w Zakazanym Mieście",
+  temat:"seccomp",
+  opowiesc:`<p>Po pościgu przez pół świata oba zespoły trafiają do Zakazanego Miasta w Pekinie i oba wpadają w pułapki zastawione przez włamywaczy. Pułapka Kadrylla jest wyrafinowana: uwięziony może wykonać tylko kilka ściśle określonych ruchów. Każdy inny kończy się natychmiastową „śmiercią” — na szczęście tylko procesu.</p>
+  <p>Głąb rozpoznaje mechanizm od razu. To <b>seccomp w trybie ścisłym</b>: wolno tylko <code>read</code>, <code>write</code>, <code>_exit</code> i <code>sigreturn</code>.</p>`,
+  lekcja:`<p><b>seccomp</b> (<i>secure computing</i>) ogranicza zbiór wywołań systemowych, których proces może użyć. W <b>trybie ścisłym</b> lista jest stała i bardzo krótka; wszystko inne kończy się sygnałem <code>SIGKILL</code>.</p>
+  <p>W <b>trybie filtrów</b> (seccomp-bpf) proces instaluje mały program, który dla każdego wywołania decyduje: zezwól, zwróć błąd albo zabij.</p>`,
+  czesci:[
+   {typ:"siatka", polecenie:"Proces Głąba jest w trybie ścisłym. Proszę zdecydować, które wywołania przejdą, a które skończą się zabiciem procesu.",
+    etykiety:["PRZEJDZIE","ZABITY"],
+    pozycje:[
+     {t:"<code>read()</code> ze standardowego wejścia, które było otwarte, zanim zatrzasnęła się pułapka", z:true, w:"<code>read</code> jest na liście, a deskryptor otwarto wcześniej."},
+     {t:"<code>write()</code> na standardowe wyjście — Głąb zaczyna przemowę", z:true, w:"<code>write</code> jest na liście. Przemowa może trwać."},
+     {t:"<code>openat(\"/zakazane-miasto/mapa\")</code>", z:false, w:"Otwieranie plików nie jest dozwolone. Tryb ścisły nie pozwala otworzyć niczego nowego."},
+     {t:"<code>execve(\"/bin/sh\")</code> — próba uruchomienia powłoki", z:false, w:"Uruchamianie programów jest zakazane. To właśnie chroni przed przejęciem."},
+     {t:"<code>socket()</code> — wezwanie pomocy przez sieć", z:false, w:"Gniazd sieciowych nie ma na liście."},
+     {t:"<code>_exit(0)</code> — spokojne zakończenie", z:true, w:"Proces zawsze może zakończyć się z własnej woli."}
+    ]},
+   {typ:"quiz", pyt:[
+    {p:"Volt-R zakłada sobie filtr seccomp, który blokuje <code>mkdir</code>, a potem uruchamia proces potomny. Czy potomek może ten filtr zdjąć?",
+     o:["Tak, wystarczy wywołać <code>prctl()</code>","Nie — potomkowie dziedziczą filtr i nie da się go usunąć, można tylko dołożyć kolejne","Tak, jeśli potomek jest szczeniakiem"], ok:1,
+     w:"Filtry seccomp tylko przybywają. Wykład pokazywał filtr, który blokuje tworzenie katalogów także w procesach potomnych."},
+    {p:"Dlaczego zwykły użytkownik przed założeniem filtra musi ustawić flagę <code>no_new_privs</code>?",
+     o:["Żeby przyspieszyć działanie filtra","Żeby jądro zapisywało filtr w dzienniku","Żeby nie mógł potem uruchomić programu z bitem setuid i podstępnie ograniczyć go filtrem"], ok:2,
+     w:"Bez tej flagi filtr mógłby „zmylić” program uprzywilejowany (np. zablokować mu <code>setuid</code> i sprawić, że błędnie uzna operację za udaną). Z flagą <code>execve</code> nie nadaje już nowych uprawnień."}
+   ]}
+  ]
+},
+{
+  tytul:"Pościg przez sześć kontynentów",
+  temat:"piaskownice",
+  opowiesc:`<p>Zanim doszło do Pekinu, był pościg. Nieszczególny i Kadryll zostawiali fałszywe tropy na całym świecie, a każdy trop prowadził do innej <b>piaskownicy</b> — miejsca, w którym program może się bawić, ale nie wyjdzie poza obrzeże.</p>
+  <p>Baronowa i Volt-R prowadzą dziennik pościgu. Proszę pomóc go uzupełnić.</p>`,
+  lekcja:`<p><b>Piaskownica</b> (<i>sandbox</i>) to gotowy zestaw ograniczeń, zbudowany z klocków, które już znamy: osobnych identyfikatorów użytkowników, przestrzeni nazw, filtrów seccomp, poziomów integralności i zdolności.</p>`,
+  czesci:[{typ:"dopasuj", polecenie:"Proszę dobrać mechanizm do każdego wpisu w dzienniku. Każdy mechanizm pasuje dokładnie raz.",
+    opcje:["piaskownica przeglądarki","Android","AppContainer w Windows","systemd","pledge w OpenBSD","filtr seccomp-bpf"],
+    pozycje:[
+     {t:"<b>Tokio.</b> Nieszczególny ukrywa się na stronie z kotami. Strona nie ma dostępu do plików ani do innych kart, bo każda karta ma osobny, ograniczony proces renderujący.", ok:0, w:"Przeglądarki dzielą się na procesy i zamykają procesy renderujące w piaskownicy; w Linuksie korzystają przy tym m.in. z seccomp i przestrzeni nazw."},
+     {t:"<b>Sydney.</b> Kadryll instaluje aplikację „Jaśmin”. System nadaje jej osobny identyfikator użytkownika Linuksa, więc nie przeczyta danych innych aplikacji.", ok:1, w:"Android od początku daje każdej aplikacji osobny UID, a do tego dokłada SELinux."},
+     {t:"<b>Kair.</b> Aplikacja ze sklepu Microsoft Store działa z najniższym poziomem integralności i może sięgać tylko po zasoby, które wprost zadeklarowała.", ok:2, w:"AppContainer łączy poziom integralności Low z listą zadeklarowanych możliwości (<i>capabilities</i>) aplikacji."},
+     {t:"<b>São Paulo.</b> Baron uruchamia usługę <code>herbarz.service</code> z opcjami <code>ProtectHome=yes</code>, <code>PrivateTmp=yes</code> i <code>NoNewPrivileges=yes</code>.", ok:3, w:"systemd buduje piaskownicę usługi z przestrzeni nazw i innych klocków za pomocą kilku linijek w pliku jednostki."},
+     {t:"<b>Syberia.</b> Program Nieszczególnego deklaruje na starcie <code>pledge(\"stdio rpath\")</code>. Gdy później próbuje otworzyć gniazdo sieciowe, zostaje zabity.", ok:4, w:"<code>pledge</code> to obietnica złożona jądru: „będę korzystać tylko z tych grup funkcji”. Złamanie obietnicy kończy się zabiciem procesu."},
+     {t:"<b>Toronto.</b> Konwerter pocztówek Volt-R instaluje mały program, który dla każdego wywołania systemowego sprawdza numer i argumenty, a potem pozwala, zwraca błąd albo zabija.", ok:5, w:"To opis trybu filtrów seccomp — tego samego mechanizmu, który pod spodem wykorzystują przeglądarki i kontenery."}
+    ]}]
+},
+{
+  tytul:"Kolacja w pekińskiej kawiarni",
+  temat:"kontenery a maszyny wirtualne",
+  opowiesc:`<p>Głąb wygłasza mowę o przyjaźni i lojalności. Nieszczególny i Kadryll wychodzą z cienia ze łzami w oczach, padają sobie w ramiona i oddają dokumenty — każdy po połówce.</p>
+  <p>Przy kolacji byli włamywacze ogłaszają, że zakładają uczciwą firmę: będą sprawdzać zabezpieczenia cudzych serwerów. Na początek pokazują Głąbowi swoje konfiguracje kontenerów. Głąb, z ogórkiem w dłoni, wydaje opinie.</p>`,
+  lekcja:`<p><b>Kontener</b> to zwykłe procesy zamknięte przestrzeniami nazw, grupami kontrolnymi i filtrem seccomp, ale nadal korzystające z <b>jądra gospodarza</b>. <b>Maszyna wirtualna</b> ma własne jądro, a od gospodarza oddziela ją hiperwizor.</p>`,
+  czesci:[
+   {typ:"siatka", polecenie:"Proszę ocenić każdą konfigurację.",
+    etykiety:["ROZSĄDNA","GROŹNA"],
+    pozycje:[
+     {t:"<code>docker run --privileged kocia-wieza</code>", z:false, w:"Tryb uprzywilejowany oddaje kontenerowi niemal wszystkie zdolności i urządzenia gospodarza. Ściany zamku znikają."},
+     {t:"Zamontowanie <code>/var/run/docker.sock</code> wewnątrz kontenera", z:false, w:"Kto ma dostęp do gniazda Dockera, ten może uruchomić dowolny kontener na gospodarzu — w praktyce to root na zewnątrz."},
+     {t:"Proces działa jako zwykły użytkownik, z <code>--read-only</code> i <code>--cap-drop ALL</code>", z:true, w:"Minimalizm w czystej postaci: system plików tylko do odczytu, żadnych zdolności, żadnego roota."},
+     {t:"<code>--pid=host</code> „żeby łatwiej śledzić koty”", z:false, w:"Kontener dzieli wtedy przestrzeń PID z gospodarzem i widzi (a z uprawnieniami — może sygnalizować) wszystkie procesy systemu."},
+     {t:"Pozostawienie włączonego domyślnego profilu seccomp Dockera", z:true, w:"Domyślny profil blokuje kilkadziesiąt rzadko potrzebnych i ryzykownych wywołań. Wyłączanie go „bo coś nie działało” to zły pomysł."}
+    ]},
+   {typ:"quiz", pyt:[
+    {p:"Jaka jest najważniejsza różnica między kontenerem a maszyną wirtualną?",
+     o:["Kontenery dzielą jądro gospodarza; maszyna wirtualna ma własne jądro i oddziela ją hiperwizor","Kontenery działają tylko w chmurze","Maszyny wirtualne nie mogą korzystać z sieci"], ok:0,
+     w:"Dlatego błąd w jądrze może pozwolić uciec z kontenera, a ucieczka z maszyny wirtualnej wymaga błędu w hiperwizorze."},
+    {p:"Co robi gVisor?",
+     o:["Szyfruje obrazy kontenerów","Przechwytuje wywołania systemowe kontenera i obsługuje je własnym jądrem działającym w przestrzeni użytkownika","To inna nazwa Dockera"], ok:1,
+     w:"Kontener rozmawia z „jądrem zastępczym”, a nie bezpośrednio z jądrem gospodarza. Powierzchnia ataku się kurczy."},
+    {p:"Czym jest Firecracker?",
+     o:["Narzędziem do bomb widłowych","Filtrem seccomp dla przeglądarek","Lekkim nadzorcą mikromaszyn wirtualnych, uruchamianych w ułamku sekundy, np. dla funkcji bezserwerowych"], ok:2,
+     w:"Firecracker łączy izolację maszyny wirtualnej (własne jądro) z szybkością zbliżoną do kontenerów."}
+   ]}
+  ]
+}
+];
+
+/* ===================== punktacja ===================== */
+function maxCzesci(c){ return c.typ==="quiz" ? c.pyt.length : c.pozycje.length; }
+const MAX = MISJE.reduce((a,m)=>a+m.czesci.reduce((b,c)=>b+maxCzesci(c),0),0);
+const pid = (mi,ci) => `m${mi}c${ci}`;
+function misjaPkt(mi){ return MISJE[mi].czesci.reduce((a,c,ci)=>a+(S.pts[pid(mi,ci)]||0),0); }
+function misjaMax(mi){ return MISJE[mi].czesci.reduce((a,c)=>a+maxCzesci(c),0); }
+function misjaGotowa(mi){ return MISJE[mi].czesci.every((c,ci)=>S.pts[pid(mi,ci)]!==undefined); }
+function suma(){ return MISJE.reduce((a,m,mi)=>a+misjaPkt(mi),0); }
+function wszystkieGotowe(){ return MISJE.every((m,mi)=>misjaGotowa(mi)); }
+
+function ranga(p){
+  const r = p/MAX;
+  if (r>=0.9) return "Profesor muzyki minimalistycznej i izolacji procesów (stypendium fundacji Nieszczególny & Kadryll)";
+  if (r>=0.7) return "Komisarz Głąb — emerytowany, ale znowu w formie";
+  if (r>=0.5) return "Tropiciel pierwszej klasy z rekomendacją Volt-R";
+  return "Kot na okresie próbnym w kociej wieży Nieszczególnego";
+}
+
+/* kod dyplomu: FNV-1a z imienia (bez wielkości liter i spacji) i punktów */
+function norm(s){ return String(s).normalize("NFC").toLowerCase().replace(/\s+/g,""); }
+function kod(imie,p){
+  const s = norm(imie)+"|"+p+"|volt-r-wyklad6";
+  let h = 0x811c9dc5;
+  for (const ch of s){ h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193)>>>0; }
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let out="";
+  for (let i=0;i<6;i++){ out += A[h & 31]; h = (h>>>5) ^ Math.imul(h,0x9e3779b1)>>>0; h>>>=0; }
+  return out;
+}
+
+/* ===================== nawigacja ===================== */
+function idz(view, mi){ S.view=view; if(mi!==undefined) S.mi=mi; zapisz(); render(); window.scrollTo(0,0); }
+
+function pasek(){
+  const dots = MISJE.map((m,i)=>{ const c = misjaGotowa(i) ? "done" : (S.view==="mission" && S.mi===i ? "cur" : "");
+    return `<i class="${c}" title="${esc(m.tytul)}"></i>`; }).join("");
+  $("#bar").innerHTML = `<div class="brand">Sprawa rodowodu Volt-R</div>
+    <div class="dots" aria-label="postęp misji">${dots}</div>
+    <div class="meta">${S.name?esc(S.name)+" · ":""}${suma()}/${MAX} pkt</div>`;
+}
+
+/* ===================== widżety ===================== */
+function zakonczCzesc(mi,ci,pkt){
+  S.pts[pid(mi,ci)] = pkt; zapisz(); pasek(); stopka(mi);
+}
+
+function quiz(mi, ci, pytania){
+  const id = pid(mi,ci); const box = document.createElement("div");
+  S.ans[id] = S.ans[id] || {};
+  pytania.forEach((q,qi)=>{
+    const d = document.createElement("div"); d.className="q";
+    d.innerHTML = `<div class="stem">${qi+1}. ${q.p}</div><div class="opts"></div><div class="fb"></div>`;
+    const opts = d.querySelector(".opts"), fb = d.querySelector(".fb");
+    const pokaz = (wyb) => {
+      opts.querySelectorAll(".opt").forEach((b,i)=>{ b.disabled=true;
+        if(i===q.ok) b.classList.add("right"); if(i===wyb && wyb!==q.ok) b.classList.add("wrong"); });
+      fb.innerHTML = `<div class="why ${wyb===q.ok?"":"bad"}">${wyb===q.ok?"<b>Trafnie.</b> ":"<b>Pudło.</b> "}${q.w}</div>`;
+    };
+    q.o.forEach((t,i)=>{ const b=document.createElement("button"); b.className="opt"; b.innerHTML=t;
+      b.onclick=()=>{ if(S.ans[id][qi]!==undefined) return; S.ans[id][qi]=i; zapisz(); pokaz(i); koniec(); };
+      opts.appendChild(b); });
+    if (S.ans[id][qi]!==undefined) pokaz(S.ans[id][qi]);
+    box.appendChild(d);
+  });
+  const koniec = () => {
+    const odp = S.ans[id];
+    if (Object.keys(odp).length===pytania.length && S.pts[id]===undefined){
+      zakonczCzesc(mi, ci, pytania.reduce((a,q,i)=>a+(odp[i]===q.ok?1:0),0));
+    }
+  };
+  return box;
+}
+
+function siatka(mi, ci, cz){
+  const id = pid(mi,ci); const box = document.createElement("div");
+  const wyb = S.ans[id] || {};
+  const zamkn = () => S.pts[id]!==undefined;
+  box.innerHTML = `<p class="small">${cz.polecenie}</p>`;
+  cz.pozycje.forEach((w,i)=>{
+    const r = document.createElement("div"); r.className="req";
+    r.innerHTML = `<div>${w.t}</div>
+      <div class="seg" role="group"><button data-v="1">${cz.etykiety[0]}</button><button data-v="0">${cz.etykiety[1]}</button></div>
+      <div class="verdict" id="v-${id}-${i}"></div>`;
+    r.querySelectorAll("button").forEach(b=>{
+      if (wyb[i]!==undefined && String(wyb[i])===b.dataset.v) b.classList.add("on");
+      b.onclick=()=>{ if (zamkn()) return; wyb[i]=+b.dataset.v; S.ans[id]=wyb; zapisz();
+        r.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));
+        btn.disabled = Object.keys(wyb).length<cz.pozycje.length; };
+    });
+    box.appendChild(r);
+  });
+  const btn = document.createElement("button"); btn.className="btn"; btn.textContent="Zatwierdź decyzje";
+  btn.disabled = Object.keys(wyb).length<cz.pozycje.length;
+  const ujawnij = () => {
+    let pkt=0;
+    cz.pozycje.forEach((w,i)=>{ const v=$(`#v-${id}-${i}`); const ok=(wyb[i]===(w.z?1:0)); if(ok) pkt++;
+      v.className = "verdict " + (ok?"ok":"no");
+      v.innerHTML = (ok?"✓ ":"✗ Poprawnie: "+(w.z?cz.etykiety[0]:cz.etykiety[1])+". ")+w.w; });
+    box.querySelectorAll(".seg button").forEach(b=>b.disabled=true);
+    btn.hidden = true; return pkt;
+  };
+  btn.onclick = () => { if (zamkn()) return; zakonczCzesc(mi, ci, ujawnij()); };
+  box.appendChild(btn);
+  if (zamkn()) setTimeout(ujawnij,0);
+  return box;
+}
+
+function dopasuj(mi, ci, cz){
+  const id = pid(mi,ci); const box = document.createElement("div");
+  const wyb = S.ans[id] || {};
+  const zamkn = () => S.pts[id]!==undefined;
+  box.innerHTML = `<p class="small">${cz.polecenie}</p>`;
+  cz.pozycje.forEach((w,i)=>{
+    const r = document.createElement("div"); r.className="req";
+    const opcje = `<option value="">— wybierz —</option>` + cz.opcje.map((o,k)=>`<option value="${k}" ${wyb[i]===k?"selected":""}>${esc(o)}</option>`).join("");
+    r.innerHTML = `<div>${w.t}</div><select aria-label="mechanizm">${opcje}</select><div class="verdict" id="v-${id}-${i}"></div>`;
+    const sel = r.querySelector("select");
+    sel.onchange = () => { if (zamkn()) return; if (sel.value==="") delete wyb[i]; else wyb[i]=+sel.value; S.ans[id]=wyb; zapisz();
+      btn.disabled = Object.keys(wyb).length<cz.pozycje.length; };
+    box.appendChild(r);
+  });
+  const btn = document.createElement("button"); btn.className="btn"; btn.textContent="Zatwierdź";
+  btn.disabled = Object.keys(wyb).length<cz.pozycje.length;
+  const ujawnij = () => {
+    let pkt=0;
+    cz.pozycje.forEach((w,i)=>{ const v=$(`#v-${id}-${i}`); const ok = wyb[i]===w.ok; if(ok) pkt++;
+      v.className="verdict "+(ok?"ok":"no");
+      v.innerHTML=(ok?"✓ ":"✗ Poprawnie: "+esc(cz.opcje[w.ok])+". ")+w.w; });
+    box.querySelectorAll("select").forEach(s=>s.disabled=true);
+    btn.hidden = true; return pkt;
+  };
+  btn.onclick = () => { if (zamkn()) return; zakonczCzesc(mi, ci, ujawnij()); };
+  box.appendChild(btn);
+  if (zamkn()) setTimeout(ujawnij,0);
+  return box;
+}
+
+/* ===================== ekrany ===================== */
+function renderStart(){
+  const imieForm = S.name ? `<p>Gracz: <b>${esc(S.name)}</b></p>` :
+   `<label class="eyebrow" for="imie">Imię i nazwisko (pojawi się na dyplomie)</label>
+    <div class="row"><input type="text" id="imie" autocomplete="name" placeholder="np. Anna Kowalska"><button class="btn" id="ok">Zaczynam</button></div>`;
+  const lista = MISJE.map((m,i)=>{
+    const dost = S.name && (i===0 || misjaGotowa(i-1));
+    const g = misjaGotowa(i);
+    return `<li class="${g?"done":""}"><span class="nr">${i+1}</span>
+      <span class="t"><b>${m.tytul}</b><span class="small">${m.temat}${g?` · ${misjaPkt(i)}/${misjaMax(i)} pkt`:""}</span></span>
+      <button class="btn ${g?"ghost":""}" data-m="${i}" ${dost?"":"disabled"}>${g?"Zobacz":"Graj"}</button></li>`;
+  }).join("");
+  $("#app").innerHTML = `
+  <div class="eyebrow" style="margin-top:22px">Wykład 6 · Izolacja procesów</div>
+  <h1>Sprawa rodowodu Volt-R</h1>
+  <div class="story">
+    <p>Stanisław Głąb, emerytowany policjant o wiecznie zmarszczonym czole, dostaje list od starego przyjaciela: Friedricha Heinricha Marii Telesphora Theodora Filemona Freiherra de Thunder-ten-Tronkh.</p>
+    <p>Ktoś ukradł bezcenne dokumenty, które potwierdzają szlachecki rodowód owczarka niemieckiego Volt-R. Bez nich pies straci status arystokraty, a ród barona — twarz. Co powiedzą Von Jägermeisterowie?</p>
+    <p>Głąb pakuje stary zestaw detektywa i jedzie do zamku. Wie jedno: zamek, w którym wszystkie komnaty są jedną salą, sam prosi się o kradzież.</p>
+  </div>
+  <div class="sheet">
+    ${imieForm}
+    <p class="small">Sześć misji, około 30 minut. Odpowiedzi nie da się zmienić po kliknięciu, więc proszę czytać uważnie. Na końcu pojawi się dyplom z kodem do pokazania prowadzącemu. Postęp zapisuje się tylko w tej przeglądarce.</p>
+  </div>
+  <div class="sheet"><h3>Misje</h3><ul class="misje">${lista}</ul>
+    ${wszystkieGotowe()?`<div class="row"><button class="btn" id="dyplom">Do dyplomu →</button></div>`:""}
+  </div>
+  <div class="footer">Postacie i zdarzenia są zmyślone; podobieństwo do prawdziwych owczarków jest przypadkowe.<br>
+    <a href="#nauczyciel">Panel prowadzącego</a> · <a href="#" id="reset">Zacznij od nowa</a></div>`;
+  const ok = $("#ok");
+  if (ok){ const go=()=>{ const v=$("#imie").value.trim(); if(!v){ $("#imie").focus(); return; } S.name=v; zapisz(); render(); };
+    ok.onclick=go; $("#imie").onkeydown=e=>{ if(e.key==="Enter") go(); }; }
+  document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>idz("mission", +b.dataset.m));
+  const d=$("#dyplom"); if(d) d.onclick=()=>idz("final");
+  $("#reset").onclick=(e)=>{ e.preventDefault(); const p=$("#reset"); if(p.dataset.c!=="1"){ p.dataset.c="1"; p.textContent="Na pewno? Kliknij jeszcze raz"; return; }
+    S.ans={}; S.pts={}; S.view="start"; zapisz(); render(); };
+}
+
+function renderMission(mi){
+  const m = MISJE[mi];
+  $("#app").innerHTML = `<div class="eyebrow" style="margin-top:22px">Misja ${mi+1} z ${MISJE.length} · ${m.temat}</div>
+    <h2>${m.tytul}</h2><div class="story">${m.opowiesc}</div><div class="lekcja">${m.lekcja}</div>
+    <div id="zad"></div><div id="stopka"></div>`;
+  const zad = $("#zad");
+  m.czesci.forEach((c,ci)=>{
+    const el = c.typ==="quiz" ? quiz(mi,ci,c.pyt) : c.typ==="siatka" ? siatka(mi,ci,c) : dopasuj(mi,ci,c);
+    zad.appendChild(el);
+  });
+  stopka(mi);
+}
+
+function stopka(mi){
+  const st = $("#stopka"); if(!st) return;
+  if (!misjaGotowa(mi)){ st.innerHTML = `<div class="row"><button class="btn ghost" id="w">← Spis misji</button></div>`; $("#w").onclick=()=>idz("start"); return; }
+  const ost = mi===MISJE.length-1;
+  st.innerHTML = `<p class="wynik">Misja zaliczona: ${misjaPkt(mi)} / ${misjaMax(mi)} pkt <span class="lapa">🐾</span></p>
+    <div class="row"><button class="btn" id="dalej">${ost?"Do dyplomu →":"Następna misja →"}</button><button class="btn ghost" id="w">Spis misji</button></div>`;
+  $("#dalej").onclick=()=> ost ? idz("final") : idz("mission", mi+1);
+  $("#w").onclick=()=>idz("start");
+}
+
+function renderFinal(){
+  if (!wszystkieGotowe()) return idz("start");
+  const p = suma();
+  $("#app").innerHTML = `<div class="eyebrow" style="margin-top:22px">Epilog</div><h2>Utwór na cztery wywołania systemowe</h2>
+  <div class="story"><p>Nieszczególny i Kadryll dotrzymują słowa: fundują Głąbowi studia z muzyki minimalistycznej. Na pierwsze zajęcia Głąb przynosi własną kompozycję. Ma cztery dźwięki: <code>read</code>, <code>write</code>, <code>_exit</code>, <code>sigreturn</code>.</p>
+  <p>— To seccomp w trybie ścisłym — szepcze baron.<br>— To minimalizm — poprawia go Głąb. I po raz pierwszy od lat się uśmiecha.</p>
+  <p>Volt-R odzyskał rodowód. Dokumenty skleił introligator, a ich skan leży teraz w kontenerze z <code>--read-only</code>.</p></div>
+  <div class="cert"><div class="eyebrow">Dyplom</div>
+    <h3 style="margin:8px 0;font-size:22px">${esc(S.name)}</h3>
+    <p>${ranga(p)}</p>
+    <p class="score">${p} / ${MAX} pkt</p>
+    <div class="eyebrow">Kod do sprawdzenia przez prowadzącego</div>
+    <div class="code">${kod(S.name,p)}</div>
+    <p class="small">Proszę pokazać ten ekran prowadzącemu albo przepisać kod.</p></div>
+  <div class="sheet"><h3>Co zapamiętać</h3>
+  <p>• <b>chroot</b> zmienia tylko korzeń systemu plików i nie jest mechanizmem bezpieczeństwa. • <b>Przestrzenie nazw</b> decydują, co proces widzi. • <b>Grupy kontrolne</b> decydują, ile proces może zużyć. • <b>seccomp</b> decyduje, o co proces może poprosić jądro. • <b>Piaskownice</b> składają te klocki w gotowe zestawy. • <b>Kontenery</b> dzielą jądro gospodarza, <b>maszyny wirtualne</b> mają własne.</p></div>
+  <div class="row"><button class="btn ghost" id="w">← Spis misji</button></div>`;
+  $("#w").onclick=()=>idz("start");
+}
+
+function renderNauczyciel(){
+  $("#app").innerHTML = `<div class="eyebrow" style="margin-top:22px">Panel prowadzącego</div><h2>Sprawdzanie dyplomu</h2>
+  <div class="sheet"><p class="small">Proszę wpisać imię i nazwisko tak jak na dyplomie (wielkość liter i spacje nie mają znaczenia), liczbę punktów i kod.</p>
+  <label class="eyebrow" for="n-imie">Imię i nazwisko</label><div class="row"><input type="text" id="n-imie"></div>
+  <label class="eyebrow" for="n-pkt" style="display:block;margin-top:12px">Punkty (0–${MAX})</label><div class="row"><input type="text" id="n-pkt" inputmode="numeric" style="max-width:120px"></div>
+  <label class="eyebrow" for="n-kod" style="display:block;margin-top:12px">Kod z dyplomu</label><div class="row"><input type="text" id="n-kod" style="max-width:200px;text-transform:uppercase"></div>
+  <div class="row"><button class="btn" id="n-spr">Sprawdź</button><a class="btn ghost" href="#" id="n-w">Wróć do gry</a></div>
+  <div id="n-wyn"></div></div>`;
+  $("#n-spr").onclick=()=>{ const i=$("#n-imie").value, p=parseInt($("#n-pkt").value,10), k=$("#n-kod").value.trim().toUpperCase();
+    if(!i.trim()||isNaN(p)){ $("#n-wyn").innerHTML='<p class="verdict no">Proszę wpisać imię i nazwisko oraz liczbę punktów.</p>'; return; }
+    const ok = kod(i,p)===k;
+    $("#n-wyn").innerHTML = `<p class="verdict ${ok?"ok":"no"}" style="font-size:16px">${ok?"✓ Kod się zgadza.":"✗ Kod się nie zgadza (oczekiwany: "+kod(i,p)+")."}</p>`; };
+  $("#n-w").onclick=(e)=>{ e.preventDefault(); history.replaceState(null,"",location.pathname); render(); };
+}
+
+function render(){
+  pasek();
+  if (location.hash==="#nauczyciel") return renderNauczyciel();
+  if (S.view==="mission" && S.name) renderMission(S.mi);
+  else if (S.view==="final" && S.name) renderFinal();
+  else renderStart();
+}
+window.addEventListener("hashchange", render);
+render();
+</script>
+</body>
+</html>
